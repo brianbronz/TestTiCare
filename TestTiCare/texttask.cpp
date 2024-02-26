@@ -1,28 +1,14 @@
 #include "texttask.h"
 #include "task.cpp"
-TextTask::TextTask(QObject * parent) : Task(parent){
-    this->text = "Default Text";
+TextTask::TextTask(QObject *parent) : Task(parent) {
 }
 
-
-void TextTask::setPeriod(int seconds){
-    this->periodInSeconds = seconds;
-}
-
-void TextTask::setSchedule(const QString & schedule){
-    this->schedule = schedule;
-}
-
-QString TextTask::getSchedule(){
-    return this->schedule;
-}
-
-void TextTask::setText(QString & text){
+void TextTask::setText(const QString &text) {
     this->text = text;
 }
 
-QString TextTask::getText(){
-    return this->text;
+QString TextTask::getText() const {
+    return text;
 }
 
 void TextTask::execute(){

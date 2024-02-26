@@ -6,21 +6,23 @@
 class Task : public QObject{
     Q_OBJECT //enables Qt signal and slot support
 protected:
-    QTimer * timer;//Timer to execute periodically the task
-    int periodInSeconds;//Task periodicity in seconds
-    QString schedule;//Task's schedule
+    QDateTime startDateTime;
+    QString periodicityDays;
+    int periodicitySeconds;
 
 public:
     Task(QObject *parent = nullptr);//constructor
     virtual ~Task();//deconstructor
 
     //Functions
-    bool isRunning() const;
-    virtual void setPeriod(int seconds) = 0;
-    virtual void setSchedule(const QString & schedule) = 0;
-
-public slots:
     virtual void execute() = 0;
+
+    void setStartDateTime(const QDateTime &startDateTime);
+    QDateTime getStartDateTime();
+    void setPeriodicitySeconds(int periodicityseconds);
+    int getPeriodicitySeconds();
+    void setPeriodicityDays(QString periodictyDays);
+    QString getPeriodicityDays();
 
 signals:
     void taskCompleted();

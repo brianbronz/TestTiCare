@@ -6,20 +6,17 @@
 class Schedule : public QObject{
     Q_OBJECT
 private:
-    QMap<Task*, QString> taskScheduleMap; //Map that associates each task to the respective schedule
-    QList<QTimer*> timers; //list of timers to execute tasks
-
-private slots:
-    void executeTask(Task *task);//slot to execute a task when finishe the timer
-
+    QList<Task*> taskList; //list of task to execute
+    Task * currentTask;
 public:
     Schedule(QObject *parent = nullptr);
     virtual ~Schedule();
 
     //Functions
-    void addTask(Task *task, const QString & schedule); //add a task to the schedule
-    int convertScheduleToMillisecond(const QString &schedule);//convert to millisecond a schedule
-    void start(); //start the schedule
-    void stop(); //stop the schedule
+    void addTask(Task *task, const QString &executionTime); //add a task to the schedule
+    void start(); //start a task in the schedule (then for loop and check every time if there is already an active task)
+    void stop(); //stop the schedule (stop the task and remove it)
+    bool hasPendingTask();
+    int dayOfWeekFromString(const QString &dayString);//get the value of the day in the week
 };
 #endif

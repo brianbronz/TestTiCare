@@ -10,10 +10,9 @@ private:
 
 public:
     FileTask(QObject *parent = nullptr);
-    //Override functions of the class Task
-    void setPeriod(int seconds) override;
-    void setSchedule(const QString & schedule) override;
-    void execute() override;
+    virtual void execute() override;
+    void setFileName(const QString &fileName); // Imposta il nome del file
+    QString getFileName() const; // Ottiene il nome del file
 };
 
 #endif // FILETASK_H

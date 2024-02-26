@@ -56,16 +56,20 @@ void MainWindow::addCheckBox(QVBoxLayout *layout) {
 }
 
 void MainWindow::addTimeControls(QVBoxLayout *layout) {
-    // Create and configure of QTimeEdit to start at a specific time
-    QTimeEdit *timeEdit = new QTimeEdit(this);
-    timeEdit->setDisplayFormat("hh:mm:ss"); // Format of the hours
-    timeEdit->setTime(QTime(0, 0, 0)); // set up the initial time
+    // Create and configure the QLabel for date and time
+    QLabel *dateTimeLabel = new QLabel("Date (DD/MM/YYYY) Time (HH:MM:SS):", this);
 
-    // Adding the QTimeEdit to layout
-    layout->addWidget(timeEdit);
+    // Create and configure the QDateTimeEdit
+    QDateTimeEdit *dateTimeEdit = new QDateTimeEdit(this);
+    dateTimeEdit->setDisplayFormat("dd/MM/yyyy HH:mm:ss"); // Format of date and time
+    dateTimeEdit->setDateTime(QDateTime::currentDateTime()); // set up the initial date and time
 
-    // assign the timeclock
-    this->clockEdit = timeEdit;
+    // Add the horizontal layout to the main layout
+    layout->addWidget(dateTimeLabel);
+    // Add the dateTimeEdit layout
+    layout->addWidget(dateTimeEdit);
+    // Assign the QDateTimeEdit to clockEdit
+    this->clockEdit = dateTimeEdit;
 }
 
 MainWindow::~MainWindow(){
@@ -98,37 +102,42 @@ void MainWindow::switchSchedule(){
     } else {
         this->startButton->setText("Start Task");
         this->schedule->stop();
+        //verificare la presenza di un'altra task all;interno della schedule
+        if(!this->schedule->hasPendingTask()){
+            this->startButton->setText("Stop Task");
+            this->schedule->start();
+        }
     }
 };
 
 void MainWindow::addSingleTask(){
-    QTime time = this->clockEdit->time();
-    QString timeToStart = time.toString("hh:mm:ss");
+    QDateTime startDateTime = this->clockEdit->dateTime();
     int periodicityTime = periodicTimeEdit->getPeriodicity();
     int dayOfWeek = periodicTimeEdit->getDayOfWeek();
 
     QString selectedPeriodicity = periodicTimeEdit->getPeriodicitygetNamePeriodicDay(dayOfWeek);
-    qDebug() << timeToStart << " l'orario della task";
-    qDebug() << "Periodicita: " << periodicityTime << " in secondi";
-    qDebug() << this->checkBox->isChecked();
-    qDebug() << selectedPeriodicity << " periodicita dei giorni";
+
+    Task *newTask = nullptr;
     if(this->checkBox->isChecked()){
         //case filetask
-        FileTask * ft = new FileTask(this);
-        qDebug() << "FileTask created";
-        ft->setSchedule(timeToStart);
-        this->schedule->addTask(ft, timeToStart);
+        newTask = new FileTask(this);
     } else{
         //case text edit
-        TextTask * tt = new TextTask(this);
+        newTask = new TextTask(this);
         QString text = textEdit->toPlainText();
         if(text != ""){
-            tt->setText(text);
+            static_cast<TextTask*>(newTask)->setText(text);
         }
-        qDebug() << "TextTask created";
-        qDebug() << tt->getText();
-        tt->setSchedule(timeToStart);
-        qDebug() << tt->getSchedule();
-        this->schedule->addTask(tt, timeToStart);
+    }
+    newTask->setPeriodicityDays(selectedPeriodicity);
+    newTask->setPeriodicitySeconds(periodicityTime);
+    newTask->setStartDateTime(startDateTime);
+    this->schedule->addTask(newTask, startDateTime.toString());
+    //Reset the text edit, respectively set up for a text
+    if(!this->checkBox->isChecked()){
+        this->textEdit->clear();
+    } else {
+        textEdit->setEnabled(true);
+        this->checkBox->setChecked(false);
     }
 }

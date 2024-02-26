@@ -24,7 +24,7 @@ private:
     QPushButton *startButton;
     QPushButton *addTask;
     QCheckBox *checkBox;
-    QTimeEdit *clockEdit;
+    QDateTimeEdit *clockEdit;
     QTextEdit *textEdit;
 
     PeriodicTimeEdit *periodicTimeEdit;

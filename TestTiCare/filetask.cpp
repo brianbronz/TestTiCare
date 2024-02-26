@@ -5,13 +5,14 @@ FileTask::FileTask(QObject *parent) : Task(parent){
     this->filePath = "C:/ESEMPIO.txt";
 }
 
-void FileTask::setPeriod(int seconds){
-    this->periodInSeconds = seconds;
+void FileTask::setFileName(const QString &fileName) {
+    this->filePath = fileName;
 }
 
-void FileTask::setSchedule(const QString & schedule){
-    this->schedule = schedule;
+QString FileTask::getFileName() const {
+    return filePath;
 }
+
 
 void FileTask::execute(){
     QFile file(this->filePath);

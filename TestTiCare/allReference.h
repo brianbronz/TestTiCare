@@ -3,21 +3,24 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDateTime>
 #include <QDebug>
 #include <QFile>
+#include <QLabel>
+#include <QList>
 #include <QMainWindow>
 #include <QMap>
 #include <QMenu>
 #include <QObject>
+#include <QSpinBox>
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <QTimeEdit>
 #include <QTextEdit>
-#include <QCheckBox>
+#include <QThread>
 #include <QVBoxLayout>
-#include <QSpinBox>
-#include <QComboBox>
-
 #include "QtWidgets/qpushbutton.h"
 
 inline bool validateTime(int minute, int hour, int dayOfMonth, int month, int dayOfWeek) {
