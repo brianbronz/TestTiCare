@@ -4,18 +4,19 @@
 
 class PeriodicTimeEdit : public QWidget {
     Q_OBJECT
+
+private:
+    QTimeEdit *timeEdit;
+    QGroupBox *dayOfWeekComboBox;
+    QSpinBox *periodicitySpinBox;
+
 public:
     PeriodicTimeEdit(QWidget *parent = nullptr);
 
     QTime getTime() const;
-    void setTime(const QTime &time);
-    int getDayOfWeek() const;
+    QStringList getSelectedDaysOfWeek() const;
     int getPeriodicity() const;
-    QString getPeriodicitygetNamePeriodicDay(int dayOfWeek) const;
-private:
-    QTimeEdit *timeEdit;
-    QComboBox *dayOfWeekComboBox;
-    QSpinBox *periodicitySpinBox;
+    void setTime(const QTime &time);
 };
 
 #endif // PERIODICTIMEEDIT_H

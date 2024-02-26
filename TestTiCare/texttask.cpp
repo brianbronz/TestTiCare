@@ -12,6 +12,8 @@ QString TextTask::getText() const {
 }
 
 void TextTask::execute(){
+    //show the content of the text
     qDebug() << this->text;
+    //emit a signal when the task is completed
     emit taskCompleted();
 }

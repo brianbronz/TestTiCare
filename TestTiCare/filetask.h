@@ -6,13 +6,13 @@
 class FileTask : public Task{
     Q_OBJECT
 private:
-    QString filePath; //Path to check
+    QString filePath; //Path/name of the file to check
 
 public:
-    FileTask(QObject *parent = nullptr);
-    virtual void execute() override;
-    void setFileName(const QString &fileName); // Imposta il nome del file
-    QString getFileName() const; // Ottiene il nome del file
+    FileTask(QObject *parent = nullptr);//constructor
+    virtual void execute() override;//deconstructor
+    void setFileName(const QString &fileName); // Set the name of the file
+    QString getFileName() const; // Get the name of the file
 };
 
 #endif // FILETASK_H

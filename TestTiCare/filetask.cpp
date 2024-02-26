@@ -1,7 +1,7 @@
 #include "filetask.h"
 
 FileTask::FileTask(QObject *parent) : Task(parent){
-
+    //Default name of the file
     this->filePath = "C:/ESEMPIO.txt";
 }
 
@@ -16,6 +16,11 @@ QString FileTask::getFileName() const {
 
 void FileTask::execute(){
     QFile file(this->filePath);
-    file.exists()? qDebug() << "File Exists.": qDebug() << "File doesn't exist.";
+    //check if the file exists
+    //Only in case the file doesn't exist
+    if (!file.exists()) {
+        qDebug() << "File doesn't exist.";
+    }
+    //emit a signal when the task is completed
     emit taskCompleted();
 }

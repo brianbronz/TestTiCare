@@ -4,27 +4,33 @@
 #include "texttask.h"
 #include "periodicTimeEdit.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
+//Constructor
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
 
     // Initialize UI elements
-    setupUiElements();
+    setUpUiElements();
     //set up the connections
     setUpActionsConnections();
     //Initialize the schedule
     this->schedule = new Schedule(this);
 }
 
-void MainWindow::addPeriodicTimeEdit(QVBoxLayout *layout) {
-    this->periodicTimeEdit = new PeriodicTimeEdit(this);
-    layout->addWidget(this->periodicTimeEdit);
-
+//Deconstructor
+MainWindow::~MainWindow(){
+    delete ui;
 }
 
-void MainWindow::setupUiElements() {
+//Set up the actions
+void MainWindow::setUpActionsConnections(){
+    //Connection of actions to the slots
+    connect(startButton, &QPushButton::clicked, this, &MainWindow::switchSchedule);
+    connect(addTask, &QPushButton::clicked, this, &MainWindow::addSingleTask);
+    connect(checkBox, &QCheckBox::stateChanged, this, &MainWindow::handleCheckBoxStateChanged);
+}
+
+//Set up the interfaces
+void MainWindow::setUpUiElements() {
     QVBoxLayout *layout = new QVBoxLayout(ui->centralwidget);
     addButtons(layout);
     addTextEdit(layout);
@@ -50,7 +56,7 @@ void MainWindow::addTextEdit(QVBoxLayout *layout) {
 }
 
 void MainWindow::addCheckBox(QVBoxLayout *layout) {
-    //add the check box to (dis)able the plane text
+    //add the check box to (dis)able the text plane
     checkBox = new QCheckBox("Checkbox", this);
     layout->addWidget(checkBox);
 }
@@ -72,51 +78,27 @@ void MainWindow::addTimeControls(QVBoxLayout *layout) {
     this->clockEdit = dateTimeEdit;
 }
 
-MainWindow::~MainWindow(){
-    delete ui;
+void MainWindow::addPeriodicTimeEdit(QVBoxLayout *layout) {
+    //Add the object of the periodicTimeEdit to select specific periodic days
+    this->periodicTimeEdit = new PeriodicTimeEdit(this);
+    layout->addWidget(this->periodicTimeEdit);
+
 }
-
-void MainWindow::setUpActionsConnections(){
-    //Connection of actions to the slots
-    connect(startButton, &QPushButton::clicked, this, &MainWindow::switchSchedule);
-    connect(addTask, &QPushButton::clicked, this, &MainWindow::addSingleTask);
-    connect(checkBox, &QCheckBox::stateChanged, this, &MainWindow::handleCheckBoxStateChanged);
-}
-
-
-void MainWindow::handleCheckBoxStateChanged(int state) {
-    // Check the value of the checkbox
-    if(state == Qt::Checked){
-        // if true disable the text Edit and reset it to empty
-        textEdit->setEnabled(false);
-        textEdit->clear();
-    } else {
-        textEdit->setEnabled(true);
-    }
-}
-
-void MainWindow::switchSchedule(){
-    if (startButton->text() == "Start Task") {
-        this->startButton->setText("Stop Task");
-        this->schedule->start();
-    } else {
-        this->startButton->setText("Start Task");
-        this->schedule->stop();
-        //verificare la presenza di un'altra task all;interno della schedule
-        if(!this->schedule->hasPendingTask()){
-            this->startButton->setText("Stop Task");
-            this->schedule->start();
-        }
-    }
-};
 
 void MainWindow::addSingleTask(){
+    //Get the parameters from the GUI
+    /*
+     * - when the task starts/is planned
+     * - periodic time in seconds
+     * - periodic time for days
+     */
     QDateTime startDateTime = this->clockEdit->dateTime();
     int periodicityTime = periodicTimeEdit->getPeriodicity();
-    int dayOfWeek = periodicTimeEdit->getDayOfWeek();
+    QStringList dayOfWeek = periodicTimeEdit->getSelectedDaysOfWeek();
 
-    QString selectedPeriodicity = periodicTimeEdit->getPeriodicitygetNamePeriodicDay(dayOfWeek);
+    QString selectedPeriodicity = dayOfWeek.join(",");
 
+    //Create a Task object (is the super class of texttask and filetask)
     Task *newTask = nullptr;
     if(this->checkBox->isChecked()){
         //case filetask
@@ -129,10 +111,12 @@ void MainWindow::addSingleTask(){
             static_cast<TextTask*>(newTask)->setText(text);
         }
     }
+    //Initialize the periodic days, seconds and when the task is planned to do
     newTask->setPeriodicityDays(selectedPeriodicity);
     newTask->setPeriodicitySeconds(periodicityTime);
     newTask->setStartDateTime(startDateTime);
-    this->schedule->addTask(newTask, startDateTime.toString());
+    //add the task to the schedule
+    this->schedule->addTask(newTask);
     //Reset the text edit, respectively set up for a text
     if(!this->checkBox->isChecked()){
         this->textEdit->clear();
@@ -141,3 +125,32 @@ void MainWindow::addSingleTask(){
         this->checkBox->setChecked(false);
     }
 }
+
+void MainWindow::handleCheckBoxStateChanged(int state) {
+    // Check the value of the checkbox
+    if(state == Qt::Checked){
+        // if true disable the text Edit and reset it to empty
+        textEdit->setEnabled(false);
+        textEdit->clear();
+    } else {
+        //else able the text edit
+        textEdit->setEnabled(true);
+    }
+}
+
+void MainWindow::switchSchedule(){
+    //Change the text of the button to start/stop a task
+    if (startButton->text() == "Start Task") {
+        this->startButton->setText("Stop Task");
+        this->schedule->start();
+    } else {
+        this->startButton->setText("Start Task");
+        this->schedule->stop();
+        //Check if inside the schedule there is a task, in case execute it automatically
+        if(!this->schedule->hasPendingTask()){
+            this->startButton->setText("Stop Task");
+            this->schedule->start();
+        }
+    }
+};
+

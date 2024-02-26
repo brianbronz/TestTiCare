@@ -20,28 +20,34 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QSystemTrayIcon * trayIcon;
-    QPushButton *startButton;
-    QPushButton *addTask;
+    //field variables for the interfaces
     QCheckBox *checkBox;
     QDateTimeEdit *clockEdit;
+    QSystemTrayIcon *trayIcon;
     QTextEdit *textEdit;
+    QPushButton *startButton;
+    QPushButton *addTask;
 
     PeriodicTimeEdit *periodicTimeEdit;
     Schedule *schedule;
 
-    //Functions
-    void setupUiElements();
+    //Set Functions
+    void setUpActionsConnections();
+    void setUpUiElements();
+
+    //add functions: interfaces
     void addButtons(QVBoxLayout *layout);
     void addTextEdit(QVBoxLayout *layout);
     void addCheckBox(QVBoxLayout *layout);
     void addTimeControls(QVBoxLayout *layout);
     void addPeriodicTimeEdit(QVBoxLayout *layout);
+
+    //add a single task
     void addSingleTask();
-    void setUpActionsConnections();
 
 private slots:
-    void switchSchedule();
-    void handleCheckBoxStateChanged(int state);
+    //Private methods
+    void switchSchedule();//from start to stop task, and viceversa
+    void handleCheckBoxStateChanged(int state);//from file to text, and viceversa
 };
 #endif // MAINWINDOW_H
