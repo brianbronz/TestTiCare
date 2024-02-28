@@ -17,6 +17,8 @@ public:
     QStringList getSelectedDaysOfWeek() const;
     int getPeriodicity() const;
     void setTime(const QTime &time);
+    void resetPeriodicityDay();
+    void resetTime();
 };
 
 #endif // PERIODICTIMEEDIT_H

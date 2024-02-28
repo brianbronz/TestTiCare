@@ -27,12 +27,14 @@ void MainWindow::setUpActionsConnections(){
     connect(startButton, &QPushButton::clicked, this, &MainWindow::switchSchedule);
     connect(addTask, &QPushButton::clicked, this, &MainWindow::addSingleTask);
     connect(checkBox, &QCheckBox::stateChanged, this, &MainWindow::handleCheckBoxStateChanged);
+    connect(removeTask, &QPushButton::clicked, this, &MainWindow::removeLastTask);
 }
 
 //Set up the interfaces
 void MainWindow::setUpUiElements() {
     QVBoxLayout *layout = new QVBoxLayout(ui->centralwidget);
     addButtons(layout);
+    addRemoveLastTaskButtonAndCount(layout);
     addTextEdit(layout);
     addCheckBox(layout);
     addTimeControls(layout);
@@ -46,6 +48,7 @@ void MainWindow::addButtons(QVBoxLayout *layout) {
     this->startButton = new QPushButton("Start Task", this);
     buttonLayout->addWidget(addTask);
     buttonLayout->addWidget(startButton);
+    this->startButton->setEnabled(false);
     layout->addLayout(buttonLayout);
 }
 
@@ -57,7 +60,7 @@ void MainWindow::addTextEdit(QVBoxLayout *layout) {
 
 void MainWindow::addCheckBox(QVBoxLayout *layout) {
     //add the check box to (dis)able the text plane
-    checkBox = new QCheckBox("Checkbox", this);
+    checkBox = new QCheckBox("Disable the text", this);
     layout->addWidget(checkBox);
 }
 
@@ -83,6 +86,19 @@ void MainWindow::addPeriodicTimeEdit(QVBoxLayout *layout) {
     this->periodicTimeEdit = new PeriodicTimeEdit(this);
     layout->addWidget(this->periodicTimeEdit);
 
+}
+
+void MainWindow::addRemoveLastTaskButtonAndCount(QVBoxLayout *layout) {
+    QHBoxLayout *buttonAndCountLayout = new QHBoxLayout();
+    this->removeTask = new QPushButton("Remove the last task", this);
+    this->removeTask->setEnabled(false);
+    //Show the number of task in the schedule
+    numTask = new QLabel(this);
+    numTask->setText(QString("Number of tasks in the schedule: %1").arg(0));
+
+    buttonAndCountLayout->addWidget(numTask);
+    buttonAndCountLayout->addWidget(this->removeTask);
+    layout->addLayout(buttonAndCountLayout);
 }
 
 void MainWindow::addSingleTask(){
@@ -117,6 +133,15 @@ void MainWindow::addSingleTask(){
     newTask->setStartDateTime(startDateTime);
     //add the task to the schedule
     this->schedule->addTask(newTask);
+    updateTaskCountLabel();
+
+    if(this->startButton->isEnabled()){
+        this->startButton->setEnabled(true);
+    }
+
+    //reset the periodic day
+    this->periodicTimeEdit->resetPeriodicityDay();
+    this->periodicTimeEdit->resetTime();
     //Reset the text edit, respectively set up for a text
     if(!this->checkBox->isChecked()){
         this->textEdit->clear();
@@ -146,6 +171,7 @@ void MainWindow::switchSchedule(){
     } else {
         this->startButton->setText("Start Task");
         this->schedule->stop();
+        updateTaskCountLabel();
         //Check if inside the schedule there is a task, in case execute it automatically
         if(!this->schedule->hasPendingTask()){
             this->startButton->setText("Stop Task");
@@ -154,3 +180,22 @@ void MainWindow::switchSchedule(){
     }
 };
 
+//Remove the last Task you added
+void MainWindow::removeLastTask(){
+    schedule->removeLastTask();
+    updateTaskCountLabel();
+}
+
+//Update the number of task in the schedule
+void MainWindow::updateTaskCountLabel(){
+    int taskCount = schedule->getTaskCount();
+    numTask->setText(QString("Number of tasks in the schedule: %1").arg(taskCount));
+    //(dis)able the start and remove task button
+    if(taskCount != 0){
+        this->removeTask->setEnabled(true);
+        this->startButton->setEnabled(true);
+    } else {
+        this->removeTask->setEnabled(false);
+        this->startButton->setEnabled(false);
+    }
+}

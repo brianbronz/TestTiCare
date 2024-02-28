@@ -37,7 +37,6 @@ void Schedule::start() {
         QStringList selectedDays = periodicityDay.split(",");
         // get the periodicity time in seconds
         int periodicitySecond = currentTask->getPeriodicitySeconds();
-
         //execute the task depending on the specific periodicity
         QTimer * timer = new QTimer(this);
         connect(timer, &QTimer::timeout, [=](){
@@ -45,7 +44,7 @@ void Schedule::start() {
             QDateTime currentTime = QDateTime::currentDateTime();
             //If statement to check if the current task is nullptr, otherwise the program will crashed
             if(currentTask != nullptr){
-                if(selectedDays.isEmpty()){
+                if(selectedDays[0] == ""){
                     //execute indipendently from the time, because we wait until the start of the task
                     currentTask->execute();
                 } else {
@@ -97,4 +96,12 @@ QString Schedule::dayOfWeekToString(int dayOfWeek) {
         case 7: return "Sunday";
         default: return "Invalid Day";// Not valid value
     }
+}
+
+void Schedule::removeLastTask(){
+    this->taskList.removeLast();
+}
+
+int Schedule::getTaskCount(){
+    return this->taskList.count();
 }

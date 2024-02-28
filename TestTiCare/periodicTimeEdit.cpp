@@ -45,3 +45,16 @@ int PeriodicTimeEdit::getPeriodicity() const {
 void PeriodicTimeEdit::setTime(const QTime &time) {
     timeEdit->setTime(time);
 }
+
+void PeriodicTimeEdit::resetPeriodicityDay(){
+    QList<QCheckBox *> dayCheckBox = this->findChildren<QCheckBox *>();
+    foreach(QCheckBox * checkBox, dayCheckBox){
+        if(checkBox->isChecked()){
+            checkBox->setChecked(false);
+        }
+    }
+}
+
+void PeriodicTimeEdit::resetTime(){
+    this->periodicitySpinBox->setValue(10);
+}

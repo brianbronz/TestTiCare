@@ -23,10 +23,12 @@ private:
     //field variables for the interfaces
     QCheckBox *checkBox;
     QDateTimeEdit *clockEdit;
+    QLabel *numTask;
     QSystemTrayIcon *trayIcon;
     QTextEdit *textEdit;
     QPushButton *startButton;
     QPushButton *addTask;
+    QPushButton *removeTask;
 
     PeriodicTimeEdit *periodicTimeEdit;
     Schedule *schedule;
@@ -41,12 +43,14 @@ private:
     void addCheckBox(QVBoxLayout *layout);
     void addTimeControls(QVBoxLayout *layout);
     void addPeriodicTimeEdit(QVBoxLayout *layout);
-
+    void addRemoveLastTaskButtonAndCount(QVBoxLayout *layout);
     //add a single task
     void addSingleTask();
 
 private slots:
     //Private methods
+    void removeLastTask();
+    void updateTaskCountLabel();
     void switchSchedule();//from start to stop task, and viceversa
     void handleCheckBoxStateChanged(int state);//from file to text, and viceversa
 };

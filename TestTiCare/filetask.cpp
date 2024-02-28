@@ -19,7 +19,7 @@ void FileTask::execute(){
     //check if the file exists
     //Only in case the file doesn't exist
     if (!file.exists()) {
-        qDebug() << "File doesn't exist.";
+        qDebug() << "File " << getFileName() <<" doesn't exist.";
     }
     //emit a signal when the task is completed
     emit taskCompleted();

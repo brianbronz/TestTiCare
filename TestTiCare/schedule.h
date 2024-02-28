@@ -18,5 +18,7 @@ public:
     void stop(); //stop the schedule (stop the task and remove it)
     bool hasPendingTask(); //Check if there are any tasks to execute
     QString dayOfWeekToString(int dayOfWeek);//get the value of the day in the week
+    void removeLastTask();
+    int getTaskCount();
 };
 #endif
