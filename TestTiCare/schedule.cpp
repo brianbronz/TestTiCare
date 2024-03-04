@@ -1,15 +1,5 @@
 #include "schedule.h"
 
-QMap<QString, int> dayOfWeekMap = {
-    {"Monday", Qt::Monday},
-    {"Tuesday", Qt::Tuesday},
-    {"Wednesday", Qt::Wednesday},
-    {"Thursday", Qt::Thursday},
-    {"Friday", Qt::Friday},
-    {"Saturday", Qt::Saturday},
-    {"Sunday", Qt::Sunday}
-};
-
 Schedule::Schedule(QObject *parent) : QObject(parent), currentTask(nullptr){}
 
 Schedule::~Schedule() {}
@@ -38,7 +28,7 @@ void Schedule::start() {
         // get the periodicity time in seconds
         int periodicitySecond = currentTask->getPeriodicitySeconds();
         //execute the task depending on the specific periodicity
-        QTimer * timer = new QTimer(this);
+        this->timer = new QTimer(this);
         connect(timer, &QTimer::timeout, [=](){
             //Reset the current time
             QDateTime currentTime = QDateTime::currentDateTime();
@@ -76,6 +66,12 @@ void Schedule::stop() {
     //Stop the current task and set up the currentTask to nullptr
     if (currentTask != nullptr) {
         currentTask = nullptr;
+        //stop and delete the timer
+        if (timer != nullptr) {
+            timer->stop();
+            delete timer;
+            timer = nullptr;
+        }
     }
 }
 

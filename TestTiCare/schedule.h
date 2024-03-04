@@ -6,6 +6,7 @@
 class Schedule : public QObject{
     Q_OBJECT
 private:
+    QTimer *timer;
     QList<Task*> taskList; //list of task to execute
     Task * currentTask;
 public:
