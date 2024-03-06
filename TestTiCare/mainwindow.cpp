@@ -166,6 +166,7 @@ void MainWindow::handleCheckBoxStateChanged(int state) {
 void MainWindow::switchSchedule(){
     //Change the text of the button to start/stop a task
     if (startButton->text() == "Start Task") {
+        this->removeTask->setEnabled(false);
         this->startButton->setText("Stop Task");
         this->schedule->start();
     } else {
@@ -174,6 +175,7 @@ void MainWindow::switchSchedule(){
         updateTaskCountLabel();
         //Check if inside the schedule there is a task, in case execute it automatically
         if(!this->schedule->hasPendingTask()){
+            this->removeTask->setEnabled(false);
             this->startButton->setText("Stop Task");
             this->schedule->start();
         }
